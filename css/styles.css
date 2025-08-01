@@ -1,0 +1,50 @@
+
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing:border-box;
+}
+
+#main-content {
+    width: 500px;
+    /* height: 700px; */
+    background-color: grey;
+    
+    display:flex;
+    flex-direction: column;
+    padding: 40px;
+    gap: 80px;
+    /* align-items: center; */
+    
+    & > #digi-border {
+        background-color: darkgray;
+        height: 80px;
+        padding-bottom: 80px;
+    }
+
+    & > #key-area {
+        width: 340px;
+        height: 340px;
+        background-color: darkgrey;
+        align-self: center;
+    }
+}
+
+#digi-border {
+
+}
+
+.key-row {
+    flex: row;
+    gap: 20px;
+    display:flex;
+    justify-content: center;
+    
+}
+.key-class {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    background-color: black;
+    border-radius: 15px;
+}
