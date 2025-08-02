@@ -60,12 +60,8 @@
 }
 
 .key-row {
-    /* flex: row; */
     gap: 20px;
     display:flex;
-    /* justify-content: space-between; */
-    flex: 1 1 auto;
-    
 }
 
 .key-class {
@@ -80,4 +76,16 @@
     background-image:linear-gradient(to bottom, #333333, black);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
     border: 4px solid #55555544;
+
+    /* Transition hover state - shadow and text color */
+    transition: box-shadow 0.8s ease;
+    transition: color 0.8s ease;
+}
+
+/* Hover over key button transitions shadow and text color
+*/
+.key-class:hover {
+    cursor: pointer;
+    box-shadow: 0 0px 0px;
+    color: aqua;
 }

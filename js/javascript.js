@@ -3,7 +3,7 @@ function buildKeysMatrix() {
     const keyMatrix = 
         [
             [7,8,9,"\u00f7",'AC'],
-            [4,5,6,'x'],
+            [4,5,6,'x',"\u2190"],
             [1,2,3,'-'],
             [0,'.','=','+']
         ];
