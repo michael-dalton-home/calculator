@@ -15,8 +15,8 @@ function buildKeysMatrix() {
         row.classList = 'key-row';
 
         for (k=0; k<keyMatrix[r].length; k++) {
-            let key = document.createElement('div');
-            key.classList = '.key-class';
+            key = document.createElement('div');
+            key.classList = 'key-class wdxl-lubrifont-tc-regular';
             key.textContent = keyMatrix[r][k];
             row.appendChild(key);
         }

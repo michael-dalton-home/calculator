@@ -5,6 +5,13 @@
     box-sizing:border-box;
 }
 
+.wdxl-lubrifont-tc-regular {
+  font-family: "WDXL Lubrifont TC", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: xx-large;
+}
+
 #main-content {
     width: 500px;
     /* height: 700px; */
@@ -23,8 +30,8 @@
     }
 
     & > #key-area {
-        width: 340px;
-        height: 340px;
+        /* width: 340px; */
+        /* height: 340px; */
         background-color: darkgrey;
         align-self: center;
     }
@@ -35,16 +42,19 @@
 }
 
 .key-row {
-    flex: row;
+    /* flex: row; */
     gap: 20px;
     display:flex;
-    justify-content: center;
+    justify-content: space-between
+    flex: 1 1 auto;
     
 }
+
 .key-class {
     width: 50px;
     height: 50px;
     text-align: center;
     background-color: black;
+    color: white;
     border-radius: 15px;
 }
