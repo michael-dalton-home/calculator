@@ -13,27 +13,40 @@
 }
 
 #main-content {
-    width: 500px;
+    width: 550px;
     /* height: 700px; */
     background-color: grey;
+    border-radius: 20px;
+    /* border: 5px solid #3333355; */
+
+    /* Add shading the main area */
+    background-image:linear-gradient(to bottom, rgb(53,63,53), rgb(33,43,33));
+    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.5);
+    border: 8px solid rgba(38, 48, 41, 0.381);
     
     display:flex;
     flex-direction: column;
     padding: 40px;
-    gap: 80px;
-    /* align-items: center; */
+    gap: 30px;
+    flex: 0 0 auto;
     
     & > #digi-border {
         background-color: darkgray;
         height: 80px;
-        padding-bottom: 80px;
+        padding-bottom: 50px;
     }
 
     & > #key-area {
-        /* width: 340px; */
-        /* height: 340px; */
-        background-color: darkgrey;
+        background-color: rgb(94, 94, 94);
+        border: 2px groove black;
         align-self: center;
+
+        display: flex;
+        flex-direction: column;
+        gap:10px;
+
+        border-radius: 15px;
+        padding: 25px;
     }
 }
 
@@ -45,16 +58,21 @@
     /* flex: row; */
     gap: 20px;
     display:flex;
-    justify-content: space-between
+    /* justify-content: space-between; */
     flex: 1 1 auto;
     
 }
 
 .key-class {
-    width: 50px;
-    height: 50px;
+    width: 75px;
+    height: 60px;
     text-align: center;
     background-color: black;
     color: white;
     border-radius: 15px;
+
+    /* Add shading the key buttons */
+    background-image:linear-gradient(to bottom, #333333, black);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+    border: 4px solid #55555544;
 }
