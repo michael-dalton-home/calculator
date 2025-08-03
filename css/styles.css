@@ -5,7 +5,7 @@
     box-sizing:border-box;
 }
 
-.space-mono-regular, #digi-display, .key-class {
+.space-mono-regular, #digi-display, .key-class, #digi-modifier {
     font-family: "Space Mono", monospace;
     font-weight: 400;
     font-style: normal;
@@ -29,19 +29,26 @@
     flex: 0 0 auto;
     
     & > #digi-border {
-        background-color: darkgray;
+        background-color: aqua;
         height: 100px;
         border: 4px inset #0d0f0d;
         display:flex;
-        flex-direction: row-reverse; 
+        /* flex-direction: row-reverse;  */
         overflow: hidden;
+        gap:10px;
 
+        & > #digi-modifier {
+            flex: 1;
+            font-size: 60px;
+            padding-left: 4px;
+        }
         & > #digi-display {
-            background-color: aqua;
-            /* flex: 1; */
-            padding-left: 10px;
-            padding-right: 10px;
+            flex: 10;
             font-size: 80px;
+            padding-right: 10px;
+        }
+
+        & > #digi-display, #digi-modifier {
             text-align: right;
             text-shadow: 4px 4px 8px rgba(33,43,33, 0.7);
             
