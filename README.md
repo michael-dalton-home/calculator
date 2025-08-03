@@ -6,3 +6,10 @@ Simple calculator simluation
 60m Cosmetic improvements to the key area
 30m Cosmetic transition for hover over keys
 40m Swapped in Google Space Mono font
+60m Key listener and display basics (no calcs)
+
+Font Space Mono from Google
+
+HTML, CSS, Javascript, Git, VScode.  
+
+08.2025 (c) Michael Dalton
