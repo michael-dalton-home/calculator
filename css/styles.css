@@ -5,8 +5,8 @@
     box-sizing:border-box;
 }
 
-.wdxl-lubrifont-tc-regular, #digi-display, .key-class {
-    font-family: "WDXL Lubrifont TC", sans-serif;
+.space-mono-regular, #digi-display, .key-class {
+    font-family: "Space Mono", monospace;
     font-weight: 400;
     font-style: normal;
     font-size: xx-large;
@@ -33,16 +33,23 @@
         height: 100px;
         border: 4px inset #0d0f0d;
         display:flex;
+        flex-direction: row-reverse; 
+        overflow: hidden;
 
         & > #digi-display {
             background-color: aqua;
-            flex: 1;
+            /* flex: 1; */
             padding-left: 10px;
             padding-right: 10px;
             font-size: 80px;
             text-align: right;
             text-shadow: 4px 4px 8px rgba(33,43,33, 0.7);
-        }
+            
+            /* Align text vertically centred and from right edge */
+            direction: rtl;
+            align-self:center;
+            overflow: hidden;
+        }        
     }
 
     & > #key-area {
