@@ -2,13 +2,17 @@ const keyArea = document.querySelector("#key-area");
 const display = document.querySelector("#digi-display");
 const modifier= document.querySelector("#digi-modifier");
 
-const DEF_DISP = '0';       // Default display sequence
-const DISP_LEN = 8;         // Max number of characters in display
-const DIVIDE   = "\u00f7";  // Division character
-const BKSPACE  = "\u2190";  // Backspace character
+const SECRET_FLAG = ' ';            // Used to prepend a displayed number to
+                                    // remind display handler that although we are
+                                    // displaying a placemarker, the user still has 
+                                    // to enter a real number before a calc can occur
+const DEF_DISP = SECRET_FLAG+'0';   // Default display sequence
+const DISP_LEN = 8;                 // Max number of characters in display
+const DIVIDE   = "\u00f7";          // Division character
+const BKSPACE  = "\u2190";          // Backspace character
 
-let accumulator = 0;        // Total so far
-let valQueue    = [];       // Holds the initial operand(s)
+let accumulator = 0;                // Total so far
+let valQueue    = [];               // Holds the initial operand(s)
 
 
 /* Add all the key button objects to the display key-area
@@ -41,35 +45,43 @@ function buildKeysMatrix() {
 
 /* Calculate - perform action based on the latest event
 * ev  - latest key press, to be actioned
-* op  - goal operation (if we have one yet)
 * str - latest operand (entered into display)
+* Return - Resultant number to display on screen (string)
 */
-function processOp(ev, op, str) {
-    switch (ev) {
-    case '=':
-        if (valQueue.length) {
-            switch (op) {
-            case '+':   return (+valQueue.shift() + +str).toString();
-            case '-':   return (+valQueue.shift() - +str).toString();
-            case DIVIDE:return Math.floor(+valQueue.shift() / +str).toString();
-            case 'x':   return (+valQueue.shift() * +str).toString();
-            }
-        }
-        break;
+function processOp(ev, str) {
 
-    case '+':
-    case '-':
-    case DIVIDE:      // Divide
-    case 'x':
-        if (op === '' && !valQueue.length) {
-            valQueue.push(+str);
-        }
-        break;
-
-    case 'AC':
+    /* Clear calc and return */
+    if (ev === 'AC') {
         valQueue.length = [];
-        break;
+        return DEF_DISP;
     }
+
+    /* Push number and operation to queue */
+    valQueue.push(+str);
+    valQueue.push(ev);
+    console.log('Adding operand '+str+' and operation '+ev);
+
+    /* Perform calculation if num + op + num (+ op) */
+    if (valQueue.length > 2) {
+        let total = +valQueue.shift();
+        switch (valQueue.shift()) {
+        case '+':   total += +valQueue.shift(); break;
+        case '-':   total -= +valQueue.shift(); break;
+        case DIVIDE:total /= +valQueue.shift(); break;
+        case 'x':   total *= +valQueue.shift(); break;
+        }
+
+        if (ev === '=') 
+            valQueue = [];              // Calc is complete, clear queue
+        else
+            valQueue.unshift(total);    // Push calc to front of queue
+
+        console.log('Resultant operand '+total);
+        return total.toString();
+    }
+
+    /* Return current number by default */
+    return str;
 }
 
 /* Listener callback event (attached to key-area)
@@ -77,53 +89,34 @@ function processOp(ev, op, str) {
 function handleKeyPress(ev) {
     console.log('Key '+ev.target.textContent);
 
-    switch (ev.target.textContent) {
-    case '0':
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-        if (display.textContent === DEF_DISP)
+    if ('0123456789'.includes(ev.target.textContent)) {
+        if (display.textContent[0] === SECRET_FLAG)
             display.textContent = ev.target.textContent;
+
         else if (display.textContent.length < 8)
             display.textContent += ev.target.textContent;
-        break;
+    
+    } else if (`+-x${DIVIDE}`.includes(ev.target.textContent)) {
+        modifier.textContent = ev.target.textContent;
+        display.textContent  = SECRET_FLAG+processOp(
+            ev.target.textContent, display.textContent);
 
-    case '+':
-    case '-':
-    case DIVIDE:
-    case 'x':
-        if (modifier.textContent === '') {
-            processOp(ev.target.textContent, 
-                modifier.textContent, display.textContent);
-            display.textContent  = DEF_DISP;
-            modifier.textContent = ev.target.textContent;
-        }
-        break;
-
-    case 'AC':
+    } else if (ev.target.textContent === 'AC') {
         modifier.textContent = '';
-        display.textContent = DEF_DISP;
-        processOp(ev.target.textContent, 
-                modifier.textContent, display.textContent);
-        break;
+        display.textContent  = processOp(
+            ev.target.textContent, display.textContent);
 
-    case BKSPACE:
+    } else if (ev.target.textContent === BKSPACE) {
         display.textContent = display.textContent.slice(0, -1);
-        if (display.textContent === '')
+        if (display.textContent === '' || display.textContent === SECRET_FLAG)
             display.textContent = DEF_DISP;
-        break;
 
-    case '=':
-        display.textContent = processOp(ev.target.textContent, 
-                modifier.textContent, display.textContent);
+    } else if (ev.target.textContent === '=') {
         modifier.textContent = '';
-        break;
+        display.textContent  = SECRET_FLAG+processOp(
+            ev.target.textContent, 
+            (display.textContent[0] === SECRET_FLAG)?
+            DEF_DISP:display.textContent);
     }
 }
 

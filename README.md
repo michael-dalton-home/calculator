@@ -7,6 +7,8 @@ Simple calculator simluation
 30m Cosmetic transition for hover over keys
 40m Swapped in Google Space Mono font
 60m Key listener and display basics (no calcs)
+150m Added calculation to perform arithmetic
+60m Bug: display the initial result while allowing a secondary operation
 
 Font Space Mono from Google
 

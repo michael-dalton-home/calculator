@@ -53,7 +53,6 @@
             text-shadow: 4px 4px 8px rgba(33,43,33, 0.7);
             
             /* Align text vertically centred and from right edge */
-            direction: rtl;
             align-self:center;
             overflow: hidden;
         }        
