@@ -2,17 +2,22 @@ const keyArea = document.querySelector("#key-area");
 const display = document.querySelector("#digi-display");
 const modifier= document.querySelector("#digi-modifier");
 
-const SECRET_FLAG = ' ';            // Used to prepend a displayed number to
-                                    // remind display handler that although we are
-                                    // displaying a placemarker, the user still has 
-                                    // to enter a real number before a calc can occur
-const DEF_DISP = SECRET_FLAG+'0';   // Default display sequence
+const DEF_DISP = '0';               // Default display sequence
 const DISP_LEN = 8;                 // Max number of characters in display
 const DIVIDE   = "\u00f7";          // Division character
 const BKSPACE  = "\u2190";          // Backspace character
+const CLEAR    = 'AC';              // Clear operation
+
+const STATE_DEFAULT         = 1;    // Reset state
+const STATE_FIRST_NUMBER    = 2;    // Collect first number
+const STATE_SECOND_NUMBER   = 3;    // Collect subsequent number
 
 let accumulator = 0;                // Total so far
 let valQueue    = [];               // Holds the initial operand(s)
+
+let inBuffer    = '';
+let inDisplay   = DEF_DISP;
+let inState     = STATE_DEFAULT;
 
 
 /* Add all the key button objects to the display key-area
@@ -21,7 +26,7 @@ let valQueue    = [];               // Holds the initial operand(s)
 function buildKeysMatrix() {
     const keyMatrix = 
         [
-            [7,8,9,DIVIDE,'AC'],
+            [7,8,9,DIVIDE,CLEAR],
             [4,5,6,'x',BKSPACE],
             [1,2,3,'-'],
             [0,'.','=','+']
@@ -43,23 +48,102 @@ function buildKeysMatrix() {
    }
 }
 
-/* Calculate - perform action based on the latest event
-* ev  - latest key press, to be actioned
-* str - latest operand (entered into display)
-* Return - Resultant number to display on screen (string)
-*/
-function processOp(ev, str) {
+function stateDefault(ev) {
+    valQueue = [];
+    inBuffer   = '';
+    inDisplay  = DEF_DISP;
+    inModifier = '';
+    return STATE_FIRST_NUMBER;
+}
 
-    /* Clear calc and return */
-    if (ev === 'AC') {
-        valQueue.length = [];
-        return DEF_DISP;
+function stateFirstNumber(ev) {
+    let state = STATE_FIRST_NUMBER;
+
+    if ('0123456789'.includes(ev)) {
+        if (inBuffer === '') {
+            inBuffer = ev;
+            inDisplay = ev;
+
+        } else if (inBuffer.length < DISP_LEN) {
+            if ((ev === '0' && inBuffer !== '0') ||
+                (ev !== '0')) {
+                inBuffer += ev;
+                inDisplay += ev;
+            }
+        }
+    
+    } else if (ev === BKSPACE) {
+        if (inBuffer !== '') {
+            inBuffer  = inBuffer.slice(0, -1);
+            inDisplay = inBuffer;
+            if (inDisplay === '')
+                inDisplay = DEF_DISP;
+        } 
+    
+    } else if (`+-x${DIVIDE}`.includes(ev)) {
+        if (inBuffer !== '') {
+            /* Push number and operation to queue */
+            valQueue.push(+inBuffer);
+            valQueue.push(ev);
+            inModifier = ev;
+            console.log('Adding first num '+inBuffer+' and operation '+ev);
+
+            inBuffer = '';
+            state = STATE_SECOND_NUMBER;
+        }
     }
 
-    /* Push number and operation to queue */
-    valQueue.push(+str);
-    valQueue.push(ev);
-    console.log('Adding operand '+str+' and operation '+ev);
+    return state;
+}
+
+function stateSecondNumber(ev) {
+    let state = STATE_SECOND_NUMBER;
+
+    if ('0123456789'.includes(ev)) {
+        if (inBuffer === '') {
+            inBuffer = ev;
+            inDisplay = ev;
+
+        } else if (inBuffer.length < DISP_LEN) {
+            if ((ev === '0' && inBuffer !== '0') ||
+                (ev !== '0')) {
+                inBuffer += ev;
+                inDisplay = inBuffer;
+            }
+        }
+    
+    } else if (ev === BKSPACE) {
+        if (inBuffer !== '') {
+            inBuffer  = inBuffer.slice(0, -1);
+            inDisplay = inBuffer;
+            if (inDisplay === '')
+                inDisplay = ''+valQueue[0];
+        }
+    
+    } else if (`+-x${DIVIDE}=`.includes(ev)) {
+        if (inBuffer !== '') {
+            /* Push number and operation to queue */
+            valQueue.push(+inBuffer);
+
+            if (ev !== '=') {
+                valQueue.push(ev);
+                inModifier = ev;
+            } else {
+                inModifier = '';
+            }
+
+            console.log('Adding second num '+inBuffer+' and operation '+ev);
+
+            inDisplay = performOperation();
+            inBuffer = '';
+        }
+    }
+
+    return state;
+}
+
+function performOperation() {
+    ret = inDisplay;
 
     /* Perform calculation if num + op + num (+ op) */
     if (valQueue.length > 2) {
@@ -71,53 +155,45 @@ function processOp(ev, str) {
         case 'x':   total *= +valQueue.shift(); break;
         }
 
-        if (ev === '=') 
-            valQueue = [];              // Calc is complete, clear queue
-        else
-            valQueue.unshift(total);    // Push calc to front of queue
+        valQueue.unshift(total);    // Push calc to front of queue
 
         console.log('Resultant operand '+total);
-        return total.toString();
+        ret = total.toString();
     }
 
-    /* Return current number by default */
-    return str;
+    return ret;
+}
+
+function stateProcessor(ev) {
+    let retState = undefined;
+
+    if (ev === CLEAR) {
+        inState = STATE_DEFAULT;
+    }
+
+    switch (inState) {
+    case STATE_DEFAULT:         retState = stateDefault(ev);      break;
+    case STATE_FIRST_NUMBER:    retState = stateFirstNumber(ev);  break;
+    case STATE_SECOND_NUMBER:   retState = stateSecondNumber(ev); break;
+    }
+
+    if (inState !== retState) {
+        console.log('State changed from '+inState+' to '+retState);
+        inState = retState;
+    }
+
+    return retState;
 }
 
 /* Listener callback event (attached to key-area)
 */
-function handleKeyPress(ev) {
+function handleMousePress(ev) {
     console.log('Key '+ev.target.textContent);
 
-    if ('0123456789'.includes(ev.target.textContent)) {
-        if (display.textContent[0] === SECRET_FLAG)
-            display.textContent = ev.target.textContent;
+    stateProcessor(ev.target.textContent);
 
-        else if (display.textContent.length < 8)
-            display.textContent += ev.target.textContent;
-    
-    } else if (`+-x${DIVIDE}`.includes(ev.target.textContent)) {
-        modifier.textContent = ev.target.textContent;
-        display.textContent  = SECRET_FLAG+processOp(
-            ev.target.textContent, display.textContent);
-
-    } else if (ev.target.textContent === 'AC') {
-        modifier.textContent = '';
-        display.textContent  = processOp(
-            ev.target.textContent, display.textContent);
-
-    } else if (ev.target.textContent === BKSPACE) {
-        display.textContent = display.textContent.slice(0, -1);
-        if (display.textContent === '' || display.textContent === SECRET_FLAG)
-            display.textContent = DEF_DISP;
-
-    } else if (ev.target.textContent === '=') {
-        modifier.textContent = '';
-        display.textContent  = SECRET_FLAG+processOp(
-            ev.target.textContent, 
-            (display.textContent[0] === SECRET_FLAG)?
-            DEF_DISP:display.textContent);
-    }
+    display.textContent = inDisplay;
+    modifier.textContent= inModifier;
 }
 
 /** MAIN 
@@ -126,5 +202,6 @@ function handleKeyPress(ev) {
 {
     buildKeysMatrix();
     display.textContent = DEF_DISP;
-    keyArea.addEventListener('click', handleKeyPress);
+    stateProcessor(CLEAR);
+    keyArea.addEventListener('click', handleMousePress);
 }

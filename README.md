@@ -10,6 +10,7 @@ Simple calculator simluation
 150m Added calculation to perform arithmetic
 60m Bug: display the initial result while allowing a secondary operation
 90m Differentiating a calculated vs user number on screen
+120m Rewrote as a state machine
 
 Font Space Mono from Google
 
