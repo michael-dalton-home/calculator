@@ -9,6 +9,7 @@ Simple calculator simluation
 60m Key listener and display basics (no calcs)
 150m Added calculation to perform arithmetic
 60m Bug: display the initial result while allowing a secondary operation
+90m Differentiating a calculated vs user number on screen
 
 Font Space Mono from Google
 
