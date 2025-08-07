@@ -142,16 +142,21 @@ function stateSecondNumber(ev) {
         }
     
     } else if (`+-x${DIVIDE}=`.includes(ev)) {
+        if (valQueue[1] === '=') {
+            /* Manage further op after = */
+            inBuffer = inDisplay;
+            valQueue = [];
+        }
         if (inBuffer !== '') {
             /* Push number and operation to queue */
             valQueue.push(+inBuffer);
 
-            if (ev !== '=') {
+            // if (ev !== '=') {
                 valQueue.push(ev);
                 inModifier = ev;
-            } else {
-                inModifier = '';
-            }
+            // } else {
+            //     inModifier = '';
+            // }
 
             console.log('Adding second num '+inBuffer+' and operation '+ev);
 
