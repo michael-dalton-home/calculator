@@ -59,7 +59,17 @@ function stateDefault(ev) {
 function stateFirstNumber(ev) {
     let state = STATE_FIRST_NUMBER;
 
-    if ('0123456789'.includes(ev)) {
+    if (ev === '.') {
+        if (inBuffer === '') {
+            inBuffer = '0.';
+            inDisplay= inBuffer;
+        
+        } else if (!inBuffer.includes('.') && inBuffer.length < DISP_LEN) {
+            inBuffer += ev;
+            inDisplay += ev;
+        }
+
+    } else if ('0123456789'.includes(ev)) {
         if (inBuffer === '') {
             inBuffer = ev;
             inDisplay = ev;
@@ -99,7 +109,18 @@ function stateFirstNumber(ev) {
 function stateSecondNumber(ev) {
     let state = STATE_SECOND_NUMBER;
 
-    if ('0123456789'.includes(ev)) {
+
+    if (ev === '.') {
+        if (inBuffer === '') {
+            inBuffer = '0.';
+            inDisplay= inBuffer;
+        
+        } else if (!inBuffer.includes('.') && inBuffer.length < DISP_LEN) {
+            inBuffer += ev;
+            inDisplay += ev;
+        }
+
+    } if ('0123456789'.includes(ev)) {
         if (inBuffer === '') {
             inBuffer = ev;
             inDisplay = ev;
