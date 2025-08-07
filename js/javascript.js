@@ -81,6 +81,7 @@ function stateFirstNumber(ev) {
                 inDisplay += ev;
             }
         }
+        inModifier = '';
     
     } else if (ev === BKSPACE) {
         if (inBuffer !== '') {
@@ -132,6 +133,7 @@ function stateSecondNumber(ev) {
                 inDisplay = inBuffer;
             }
         }
+        inModifier = '';
     
     } else if (ev === BKSPACE) {
         if (inBuffer !== '') {
@@ -146,17 +148,20 @@ function stateSecondNumber(ev) {
             /* Manage further op after = */
             inBuffer = inDisplay;
             valQueue = [];
+
+        } else if ( inBuffer === '' &&
+                    `+-x${DIVIDE}`.includes(valQueue[1]) &&
+                    valQueue.length === 2) {
+            /* User wants to change operator */
+            valQueue[1] = ev;
+            inModifier  = ev;
         }
+
         if (inBuffer !== '') {
             /* Push number and operation to queue */
             valQueue.push(+inBuffer);
-
-            // if (ev !== '=') {
-                valQueue.push(ev);
-                inModifier = ev;
-            // } else {
-            //     inModifier = '';
-            // }
+            valQueue.push(ev);
+            inModifier = ev;
 
             console.log('Adding second num '+inBuffer+' and operation '+ev);
 
@@ -183,8 +188,8 @@ function performOperation() {
 
         valQueue.unshift(total);    // Push calc to front of queue
 
-        console.log('Resultant operand '+total);
-        ret = total.toString();
+        ret = total.toString().slice(0,DISP_LEN);
+        console.log('Resultant operand '+ret);
     }
 
     return ret;
