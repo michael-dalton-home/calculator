@@ -211,9 +211,31 @@ function stateProcessor(ev) {
 /* Listener callback event (attached to key-area)
 */
 function handleMousePress(ev) {
-    console.log('Key '+ev.target.textContent);
+    console.log('Mouse '+ev.target.textContent);
 
     stateProcessor(ev.target.textContent);
+
+    display.textContent = inDisplay;
+    modifier.textContent= inModifier;
+}
+
+/* Listener callback event (KEYBOARD)
+*/
+function handleKeyboardPress(ev) {
+   let myKey = ev.key;
+
+
+    switch (myKey) {
+        case 'Backspace':   myKey = BKSPACE;break;
+        case '/':           myKey = DIVIDE; break;
+        case 'Escape':      myKey = 'AC';   break;
+        case '*':           myKey = 'x';    break;
+        case 'Enter':       myKey = '=';    break;
+    }
+
+    console.log('Keyboard '+myKey);
+
+    stateProcessor(myKey);
 
     display.textContent = inDisplay;
     modifier.textContent= inModifier;
@@ -227,4 +249,5 @@ function handleMousePress(ev) {
     display.textContent = DEF_DISP;
     stateProcessor(CLEAR);
     keyArea.addEventListener('click', handleMousePress);
+    document.addEventListener('keydown', handleKeyboardPress);
 }
