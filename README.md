@@ -11,6 +11,7 @@ Simple calculator simluation
 60m Bug: display the initial result while allowing a secondary operation
 90m Differentiating a calculated vs user number on screen
 120m Rewrote as a state machine
+240m Tidied up, bug fixes, key support, decimals
 
 Font Space Mono from Google
 
