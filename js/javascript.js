@@ -56,19 +56,35 @@ function stateDefault(ev) {
     return STATE_FIRST_NUMBER;
 }
 
-function stateFirstNumber(ev) {
-    let state = STATE_FIRST_NUMBER;
-
+function handleCommon(ev, def) {
     if (ev === '.') {
         if (inBuffer === '') {
             inBuffer = '0.';
             inDisplay= inBuffer;
         
-        } else if (!inBuffer.includes('.') && inBuffer.length < DISP_LEN) {
+        } else if (!inBuffer.includes('.') && 
+            inBuffer.length < DISP_LEN) {
             inBuffer += ev;
             inDisplay += ev;
         }
 
+    } else if (ev === BKSPACE) {
+        if (inBuffer !== '') {
+            inBuffer  = inBuffer.slice(0, -1);
+            inDisplay = inBuffer;
+            if (inDisplay === '')
+                inDisplay = def;
+        } else {
+            inDisplay = def;
+        }
+    }
+}
+function stateFirstNumber(ev) {
+    let state = STATE_FIRST_NUMBER;
+
+    if (`.${BKSPACE}`.includes(ev)) {
+        handleCommon(ev, DEF_DISP);
+    
     } else if ('0123456789'.includes(ev)) {
         if (inBuffer === '') {
             inBuffer = ev;
@@ -82,15 +98,7 @@ function stateFirstNumber(ev) {
             }
         }
         inModifier = '';
-    
-    } else if (ev === BKSPACE) {
-        if (inBuffer !== '') {
-            inBuffer  = inBuffer.slice(0, -1);
-            inDisplay = inBuffer;
-            if (inDisplay === '')
-                inDisplay = DEF_DISP;
-        } 
-    
+
     } else if (`+-x${DIVIDE}`.includes(ev)) {
         if (inBuffer !== '') {
             /* Push number and operation to queue */
@@ -110,16 +118,8 @@ function stateFirstNumber(ev) {
 function stateSecondNumber(ev) {
     let state = STATE_SECOND_NUMBER;
 
-
-    if (ev === '.') {
-        if (inBuffer === '') {
-            inBuffer = '0.';
-            inDisplay= inBuffer;
-        
-        } else if (!inBuffer.includes('.') && inBuffer.length < DISP_LEN) {
-            inBuffer += ev;
-            inDisplay += ev;
-        }
+    if (`.${BKSPACE}`.includes(ev)) {
+        handleCommon(ev, valQueue[0]);
 
     } if ('0123456789'.includes(ev)) {
         if (inBuffer === '') {
@@ -134,14 +134,6 @@ function stateSecondNumber(ev) {
             }
         }
         inModifier = '';
-    
-    } else if (ev === BKSPACE) {
-        if (inBuffer !== '') {
-            inBuffer  = inBuffer.slice(0, -1);
-            inDisplay = inBuffer;
-            if (inDisplay === '')
-                inDisplay = ''+valQueue[0];
-        }
     
     } else if (`+-x${DIVIDE}=`.includes(ev)) {
         if (valQueue[1] === '=') {
